@@ -73,7 +73,7 @@ WorldObject* world[MAP_SIZE_X][MAP_SIZE_Y];
 
 class Rock : public WorldObject{
 
-    string symbol = "#";
+    string symbol = "\u25A0";
 public:
     Rock(){
 
@@ -98,8 +98,8 @@ public:
     person(){
 
     }
-    int move();
-    int check();
+    int move(int d);
+    int check(int d);
     int die();
     int attack(person p);
     int checkadj();
@@ -141,8 +141,8 @@ public:
         this->alive=alive;
     }
 
-    int move();
-    int check();
+    int move(int d);
+    int check(int d);
     vector2 getPos();
     int die();
     int attack(person p);
@@ -183,8 +183,8 @@ public:
         this->state=state;
         this->alive=alive;
     }
-    int move();
-    int check();
+    int move(int d);
+    int check(int d);
     int die();
     vector2 getPos();
     int attack(person p);
@@ -250,14 +250,14 @@ int init()
     }
 
 
-   /* for (int x = 0; x < MAP_SIZE_X; x++) //print map
+    for (int x = 0; x < MAP_SIZE_X; x++) //print map
     {
         for (int y = 0; y < MAP_SIZE_Y; y++)
         {
 
            cout << world[x][y]->getSymbol() << " ";
         }
-   }*/
+   }
 
 
 
@@ -292,11 +292,37 @@ string spartan::getSymbol() {
     return symbol;
 }
 
-int spartan::check() {
-    return 0;
+int spartan::check(int d) {
+
 }
 
-int spartan::move() {
+int spartan::move(int d) { //add safety checks
+    if(d == 0 && world[getPos().x+1][getPos().y]->getSymbol() == " "){ //check x+1
+        WorldObject* tmp = world[getPos().x][getPos().y];
+        world[getPos().x+1][getPos().y] = this;
+        world[getPos().x][getPos().y] = tmp;
+    }
+    else if(d == 1 && world[getPos().x-1][getPos().y]->getSymbol() == " "){ //check x-1
+        WorldObject* tmp = world[getPos().x][getPos().y];
+        world[getPos().x-1][getPos().y] = this;
+        world[getPos().x][getPos().y] = tmp;
+
+    }
+    else if(d == 2 && world[getPos().x+1][getPos().y+1]->getSymbol() == " "){ //check y+1
+        WorldObject* tmp = world[getPos().x][getPos().y];
+        world[getPos().x][getPos().y+1] = this;
+        world[getPos().x][getPos().y] = tmp;
+        return 1;
+    }
+    else if(d == 3 && world[getPos().x][getPos().y-1]->getSymbol() == " "){ //check y-1
+        WorldObject* tmp = world[getPos().x][getPos().y];
+        world[getPos().x][getPos().y-1] = this;
+        world[getPos().x][getPos().y] = tmp;
+        return 1;
+    }
+    else{
+        return 0;
+    }
     return 0;
 }
 
@@ -315,6 +341,4 @@ string persian::getSymbol() {
 int main()
 {
     init();
-
-
 }
