@@ -4,15 +4,18 @@
 #include <math.h>
 #include <ncurses.h>
 #include <unistd.h>
+#include <cstring>
 
 
 #define MAP_SIZE_X 100
 #define MAP_SIZE_Y 100
 
-#define PASS_WIDTH 60
-#define CLIFF_X 70
-#define PASS_Y 2000
-#define WATER_X 40
+#define PASS_WIDTH 30
+#define CLIFF_X 80
+#define PASS_X 30
+#define PASS_Y 27
+#define WATER_X 20
+#define CLIFF_WATER_X 10
 
 
 using namespace std;
@@ -123,7 +126,7 @@ public:
     int check(int d);
     int die();
     virtual int attack(person* p){};
-    virtual string getname();
+    virtual string getName();
     virtual int getAc(){};
     virtual const char* getSymbol(){};
     virtual vector2 getPos(){};
@@ -172,7 +175,7 @@ public:
 
     int attack(person* p);
 
-    string getname();
+    string getName();
     const char* getSymbol();
     int getAc();
 
@@ -221,49 +224,58 @@ public:
 
 };
 
-int init()
-{
+int init() {
 
     //object creation
-    spartan* spartans[spartanArmySize];
-    persian* persians[persianArmySize];
-    for(int s=0; s<spartanArmySize; s++)
-    {
-        ostringstream s_name;
-        s_name << "spartan soldier " << s << " ";
-        string name = s_name.str();
-
-         spartans[s] = new spartan(10, name, "hoplite", 10, 5, {0,s}, 0, true);
-       //  cout << spartans[s]->getname() << "reporting for duty!" << endl;
-    }
-
-
-    for(int p=0; p<persianArmySize; p++)
-    {
-        persians[p] = new persian(2, "persian soldier", "spearman", 3, 3, {1,p}, 0, true);//fix spawning
-    }
 
     //WorldObject Placement
 
     for (int x = 0; x < MAP_SIZE_X; x++) //populate the world with non human world objects
     {
-        for (int y = 0; y < MAP_SIZE_Y; y++)
-        {
-            if(x<WATER_X)
-            {
-                world[x][y] = new Water({x,y});
+        for (int y = 0; y < MAP_SIZE_Y; y++) {
+            if (x < WATER_X) {
+                world[x][y] = new Water({x, y});
+            } else if (x > CLIFF_X) {
+                world[x][y] = new Rock({x, y});
+            } else {
+                world[x][y] = new Nothing({x, y});
             }
-            else if(x>CLIFF_X)
-            {
-                world[x][y] = new Rock({x,y});
-            }
-
-            else
-            {
-                world[x][y] = new Nothing({x,y});
+            if (y > PASS_Y && x > CLIFF_WATER_X && (x < PASS_X || x > PASS_X + PASS_WIDTH)) {
+                world[x][y] = new Rock({x, y});
             }
         }
     }
+
+    int c = 0;
+
+    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
+    {
+        for (int x = 0; x < MAP_SIZE_X; x++)
+        {
+
+            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<spartanArmySize && world[x][y] && y>PASS_Y)
+            {
+                world[x][y] = new spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
+                c++;
+            }
+        }
+    }
+
+    c=0;
+
+    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
+    {
+        for (int x = 0; x < MAP_SIZE_X; x++)
+        {
+
+            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<persianArmySize && world[x][y])
+            {
+                world[x][y] = new persian(10,"persian","spearman",5,5,{x,y},0,true);
+                c++;
+            }
+        }
+    }
+
 
 /*
     for(spartan* s : spartans) //place the spartan army
@@ -277,14 +289,7 @@ int init()
     }
 
 */
-    for (int x = 0; x < MAP_SIZE_X; x++) //print map
-    {
-        for (int y = 0; y < MAP_SIZE_Y; y++)
-        {
 
-           cout << world[x][y]->getSymbol() << " "  << x << " " << y << endl;
-        }
-   }
 
 
 
@@ -331,7 +336,7 @@ void Water::setPos(vector2 v) {
     WorldObject::setPos(v);
 }
 
-string person::getname(){
+string person::getName(){
     return name;
 }
 
@@ -364,7 +369,7 @@ int person::move(int d) { //add safety checks
 }
 
 
-string spartan::getname(){
+string spartan::getName(){
     return name;
 }
 
@@ -407,17 +412,26 @@ int main()
     resizeterm(MAP_SIZE_X,MAP_SIZE_Y);
 
 
-    for (int y = 0; y < MAP_SIZE_Y; y++)
-    {
-        for (int x = 0; x < MAP_SIZE_X; x++) //print map
-        {
 
-            mvprintw(world[x][y]->getPos().y,world[x][y]->getPos().x,world[x][y]->getSymbol());
+    start_color();
+    init_pair('~', COLOR_CYAN, COLOR_BLUE);
+
+
+    while(1)
+    {
+        for (int y = 0; y < MAP_SIZE_Y; y++)
+        {
+            for (int x = 0; x < MAP_SIZE_X; x++) //print map
+            {
+
+                mvprintw(world[x][y]->getPos().y,world[x][y]->getPos().x,world[x][y]->getSymbol());
+
+            }
 
         }
-
+        refresh();
     }
-    refresh();
+
 
 
     curs_set(false);
