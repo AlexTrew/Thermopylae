@@ -18,6 +18,8 @@
 #define CLIFF_WATER_X 10
 #define SPARTAN_ARMY_SIZE 300
 #define PERSIAN_ARMY_SIZE 1000
+#define START_DELAY 30
+#define LOG_X_OFFSET 30
 
 
 using namespace std;
@@ -49,6 +51,7 @@ public:
     vector2 getPos();
     void setPos(vector2 v);
     int move(int d);
+
 
 
 
@@ -138,10 +141,6 @@ public:
 
 class Spartan : public Person{
 
-    int skill;
-    string name;
-    string weapon;
-    int ac;
 
 
 public:
@@ -193,67 +192,6 @@ public:
 
 };
 
-WorldObject* soldiers[SPARTAN_ARMY_SIZE + PERSIAN_ARMY_SIZE ];
-
-
-int init() {
-
-    //object creation
-
-    //WorldObject Placement
-
-    for (int x = 0; x < MAP_SIZE_X; x++) //populate the world with non human world objects
-    {
-        for (int y = 0; y < MAP_SIZE_Y; y++) {
-            if (x < WATER_X) {
-                world[x][y] = new Water({x, y});
-            } else if (x > CLIFF_X) {
-                world[x][y] = new Rock({x, y});
-            } else {
-                world[x][y] = new Nothing({x, y});
-            }
-            if (y > PASS_Y && x > CLIFF_WATER_X && (x < PASS_X || x > PASS_X + PASS_WIDTH)) {
-                world[x][y] = new Rock({x, y});
-            }
-        }
-    }
-
-    int c = 0;
-
-    for (int y = 0; y < MAP_SIZE_Y; y++)
-    {
-        for (int x = 0; x < MAP_SIZE_X; x++)
-        {
-
-            if(strcmp(world[x][y]->getSymbol(), " ") == 0  && c<SPARTAN_ARMY_SIZE && world[x][y] && y>PASS_Y+1)
-            {
-                world[x][y] = new Spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
-                soldiers[c] = world[x][y];
-                c++;
-            }
-        }
-    }
-
-    c=0;
-
-    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
-    {
-        for (int x = 0; x < MAP_SIZE_X; x++)
-        {
-
-            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<PERSIAN_ARMY_SIZE && world[x][y])
-            {
-                world[x][y] = new Persian(10,"persian","spearman",5,5,{x,y},0,true);
-                soldiers[SPARTAN_ARMY_SIZE + c] = world[x][y];
-                c++;
-            }
-        }
-    }
-
-    return 0;
-
-
-}
 
 void WorldObject::setPos(vector2 v) {
     pos = {v.x,v.y};
@@ -325,6 +263,67 @@ int WorldObject::move(int d) { //add safety checks
 
 
 
+WorldObject* soldiers[SPARTAN_ARMY_SIZE + PERSIAN_ARMY_SIZE ];
+
+
+int init() {
+
+    //object creation
+
+    //WorldObject Placement
+
+    for (int x = 0; x < MAP_SIZE_X; x++) //populate the world with non human world objects
+    {
+        for (int y = 0; y < MAP_SIZE_Y; y++) {
+            if (x < WATER_X) {
+                world[x][y] = new Water({x, y});
+            } else if (x > CLIFF_X) {
+                world[x][y] = new Rock({x, y});
+            } else {
+                world[x][y] = new Nothing({x, y});
+            }
+            if (y > PASS_Y && x > CLIFF_WATER_X && (x < PASS_X || x > PASS_X + PASS_WIDTH)) {
+                world[x][y] = new Rock({x, y});
+            }
+        }
+    }
+
+    int c = 0;
+
+    for (int y = 0; y < MAP_SIZE_Y; y++)
+    {
+        for (int x = 0; x < MAP_SIZE_X; x++)
+        {
+
+            if(strcmp(world[x][y]->getSymbol(), " ") == 0  && c<SPARTAN_ARMY_SIZE && world[x][y] && y>PASS_Y+1)
+            {
+                world[x][y] = new Spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
+                soldiers[c] = world[x][y];
+                c++;
+            }
+        }
+    }
+
+    c=0;
+
+    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
+    {
+        for (int x = 0; x < MAP_SIZE_X; x++)
+        {
+
+            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<PERSIAN_ARMY_SIZE && world[x][y])
+            {
+                world[x][y] = new Persian(10,"persian","spearman",5,5,{x,y},0,true);
+                soldiers[SPARTAN_ARMY_SIZE + c] = world[x][y];
+                c++;
+            }
+        }
+    }
+
+    return 0;
+
+
+}
 
 
 
@@ -345,7 +344,7 @@ int main()
     init_pair(5,COLOR_WHITE,COLOR_GREEN);
 
     int c = 0;
-    bool started = true;
+    bool started = false;
     int n = 0;
 
     while(1)
@@ -376,17 +375,23 @@ int main()
 
         }
 
-        for(WorldObject* soldier : soldiers)
+        if(n<START_DELAY/2) mvprintw(0,LOG_X_OFFSET,"Persian commander: \" Throw down your weapons! \"");
+        if(n>=START_DELAY/2 && n<START_DELAY) mvprintw(0,LOG_X_OFFSET, "Lionidas: \" Come and take them! \"");
+        if(n>=START_DELAY) started = true;
+
+
+        for(WorldObject* soldier : soldiers) //TODO add randomness, pathfinding, and space filling
         {
             if(started){
                 if (strcmp(soldier->getSymbol(), "i") == 0) {
                     soldier->move(2);
+                 //   attack();
                 }
             }
         }
         refresh();
         n++;
-        sleep(1);
+        usleep(200000);
 
     }
 
