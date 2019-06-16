@@ -13,7 +13,7 @@
 #define PASS_WIDTH 30
 #define CLIFF_X 80
 #define PASS_X 30
-#define PASS_Y 27
+#define PASS_Y 28
 #define WATER_X 20
 #define CLIFF_WATER_X 10
 
@@ -32,17 +32,16 @@ struct vector2
 
 
 
-class WorldObject{ //object that appears in the map. May be person or an inanimate object
+class WorldObject{ //object that appears in the map. May be Person or an inanimate object
 
     vector2 pos;
+    const char* symbol = "b";
 public:
     WorldObject(vector2 pos){
         this->pos = pos;
     }
 
-    virtual const char* getSymbol(){
-
-    };
+    virtual const char* getSymbol();
 
     virtual vector2 getPos(){};
     virtual void setPos(vector2 v);
@@ -92,7 +91,7 @@ WorldObject* world[MAP_SIZE_X][MAP_SIZE_Y];
 
 class Rock : public WorldObject{
     vector2 pos;
-    const char* symbol = "M";
+    const char* symbol = "^";
 public:
 
     Rock(vector2 pos) : WorldObject(pos){
@@ -107,7 +106,7 @@ public:
 
 };
 
-class person : public WorldObject{
+class Person : public WorldObject{
 
     vector2 pos;
    string name;
@@ -118,14 +117,14 @@ class person : public WorldObject{
    bool alive;
 
 public:
-    person(vector2 pos) : WorldObject(pos){
+    Person(vector2 pos) : WorldObject(pos){
             this->pos = pos;
     }
 
     int move(int d);
     int check(int d);
     int die();
-    virtual int attack(person* p){};
+    virtual int attack(Person* p){};
     virtual string getName();
     virtual int getAc(){};
     virtual const char* getSymbol(){};
@@ -142,7 +141,7 @@ public:
 
 
 
-class spartan : public person{
+class Spartan : public Person{
 
     int skill;
     string name;
@@ -156,7 +155,7 @@ class spartan : public person{
 
 public:
 
-    spartan(int skill, string name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : person(pos){
+    Spartan(int skill, string name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(pos){
         this->skill = skill;
         this->name = name;
         this->weapon = weapon;
@@ -173,7 +172,7 @@ public:
     int die();
     int checkadj();
 
-    int attack(person* p);
+    int attack(Person* p);
 
     string getName();
     const char* getSymbol();
@@ -188,7 +187,7 @@ public:
 
 
 
-class persian : public person{
+class Persian : public Person{
 
     int skill;
     string name;
@@ -202,7 +201,7 @@ class persian : public person{
 
 public:
 
-    persian(int skill, string name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : person(pos){
+    Persian(int skill, string name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(pos){
         this->skill = skill;
         this->name = name;
         this->weapon = weapon;
@@ -216,7 +215,7 @@ public:
     int check(int d);
     int die();
     vector2 getPos();
-    int attack(person p);
+    int attack(Person p);
     int checkadj();
     const char* getSymbol();
 
@@ -253,9 +252,9 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++)
         {
 
-            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<spartanArmySize && world[x][y] && y>PASS_Y)
+            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<spartanArmySize && world[x][y] && y>PASS_Y+1)
             {
-                world[x][y] = new spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
+                world[x][y] = new Spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
                 c++;
             }
         }
@@ -270,33 +269,23 @@ int init() {
 
             if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<persianArmySize && world[x][y])
             {
-                world[x][y] = new persian(10,"persian","spearman",5,5,{x,y},0,true);
+                world[x][y] = new Persian(10,"persian","spearman",5,5,{x,y},0,true);
                 c++;
             }
         }
     }
 
-
-/*
-    for(spartan* s : spartans) //place the spartan army
-    {
-        world[s->getPos().x][s->getPos().y] = s;
-    }
-
-    for(persian* p : persians) //place the persian army
-    {
-        world[p->getPos().x][p->getPos().y] = p;
-    }
-
-*/
-
-
+    return 0;
 
 
 }
 
 void WorldObject::setPos(vector2 v) {
     pos = {v.x,v.y};
+}
+
+const char* WorldObject::getSymbol() {
+    return this->symbol;
 }
 
 void Nothing::setPos(vector2 v) {
@@ -336,11 +325,11 @@ void Water::setPos(vector2 v) {
     WorldObject::setPos(v);
 }
 
-string person::getName(){
+string Person::getName(){
     return name;
 }
 
-int person::move(int d) { //add safety checks
+int Person::move(int d) { //add safety checks
     if(d == 0 && world[getPos().x+1][getPos().y]->getSymbol() == " "){ //check x+1
         WorldObject* tmp = world[getPos().x][getPos().y];
         world[getPos().x+1][getPos().y] = this;
@@ -369,35 +358,35 @@ int person::move(int d) { //add safety checks
 }
 
 
-string spartan::getName(){
+string Spartan::getName(){
     return name;
 }
 
-vector2 spartan::getPos(){
+vector2 Spartan::getPos(){
     return pos;
 }
 
-const char* spartan::getSymbol() {
+const char* Spartan::getSymbol() {
     return symbol;
 }
 
-int spartan::getAc() {
+int Spartan::getAc() {
     return ac;
 }
 
 
 
 
-int spartan::attack(person* p){
+int Spartan::attack(Person* p){
     p->getAc();
 
 }
 
-vector2 persian::getPos() {
+vector2 Persian::getPos() {
     return pos;
 }
 
-const char* persian::getSymbol() {
+const char* Persian::getSymbol() {
     return symbol;
 }
 
@@ -409,13 +398,19 @@ int main()
 {
     init();
     initscr();
+    curs_set(false);
     resizeterm(MAP_SIZE_X,MAP_SIZE_Y);
 
 
 
     start_color();
-    init_pair('~', COLOR_CYAN, COLOR_BLUE);
+    init_pair(1, COLOR_CYAN, COLOR_BLUE);
+    init_pair(2,COLOR_BLACK,COLOR_WHITE);
+    init_pair(3,COLOR_GREEN,COLOR_GREEN);
+    init_pair(4,COLOR_WHITE,COLOR_GREEN);
+    init_pair(5,COLOR_WHITE,COLOR_GREEN);
 
+    int c = 0;
 
     while(1)
     {
@@ -423,9 +418,17 @@ int main()
         {
             for (int x = 0; x < MAP_SIZE_X; x++) //print map
             {
+                if(strcmp(world[x][y]->getSymbol(),"~")==0) c = 1;
+                if(strcmp(world[x][y]->getSymbol(),"^")==0) c = 2;
+                if(strcmp(world[x][y]->getSymbol()," ")==0) c = 3;
+                if(strcmp(world[x][y]->getSymbol(),"@")==0) c = 4;
+                if(strcmp(world[x][y]->getSymbol(),"i")==0) c = 5;
+
+                attron(COLOR_PAIR(c));
 
                 mvprintw(world[x][y]->getPos().y,world[x][y]->getPos().x,world[x][y]->getSymbol());
 
+                attroff(COLOR_PAIR(c));
             }
 
         }
@@ -434,8 +437,6 @@ int main()
 
 
 
-    curs_set(false);
-    sleep(10);
     endwin();
     exit(EXIT_SUCCESS);
 }
