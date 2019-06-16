@@ -16,13 +16,15 @@
 #define PASS_Y 28
 #define WATER_X 20
 #define CLIFF_WATER_X 10
+#define SPARTAN_ARMY_SIZE 300
+#define PERSIAN_ARMY_SIZE 1000
 
 
 using namespace std;
 
 
-int spartanArmySize = 300;
-int persianArmySize = 1000;
+
+
 
 struct vector2
 {
@@ -191,6 +193,9 @@ public:
 
 };
 
+WorldObject* soldiers[SPARTAN_ARMY_SIZE + PERSIAN_ARMY_SIZE ];
+
+
 int init() {
 
     //object creation
@@ -215,14 +220,15 @@ int init() {
 
     int c = 0;
 
-    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
+    for (int y = 0; y < MAP_SIZE_Y; y++)
     {
         for (int x = 0; x < MAP_SIZE_X; x++)
         {
 
-            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<spartanArmySize && world[x][y] && y>PASS_Y+1)
+            if(strcmp(world[x][y]->getSymbol(), " ") == 0  && c<SPARTAN_ARMY_SIZE && world[x][y] && y>PASS_Y+1)
             {
                 world[x][y] = new Spartan(10,"Spartan","spearman",5,5,{x,y},0,true);
+                soldiers[c] = world[x][y];
                 c++;
             }
         }
@@ -235,9 +241,10 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++)
         {
 
-            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<persianArmySize && world[x][y])
+            if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<PERSIAN_ARMY_SIZE && world[x][y])
             {
                 world[x][y] = new Persian(10,"persian","spearman",5,5,{x,y},0,true);
+                soldiers[SPARTAN_ARMY_SIZE + c] = world[x][y];
                 c++;
             }
         }
@@ -266,25 +273,46 @@ string Person::getName(){
 }
 
 int WorldObject::move(int d) { //add safety checks
-    if(d == 0 && world[getPos().x+1][getPos().y]->getSymbol() == " "){ //check x+1
-        WorldObject* tmp = world[getPos().x][getPos().y];
-        world[getPos().x+1][getPos().y] = this;
-        world[getPos().x][getPos().y] = tmp;
+
+
+
+    vector2 current = {getPos().x, getPos().y};
+    vector2 update;
+
+
+    if(d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
+        update = {getPos().x+1, getPos().y};
+
+        WorldObject* tmp = world[current.x][current.y];
+        world[update.x][update.y] = this;
+        world[current.x][current.y] = tmp;
+        setPos({update.x,update.y});
+
     }
-    else if(d == 1 && world[getPos().x-1][getPos().y]->getSymbol() == " "){ //check x-1
-        WorldObject* tmp = world[getPos().x][getPos().y];
-        world[getPos().x-1][getPos().y] = this;
-        world[getPos().x][getPos().y] = tmp;
+    else if(d == 1 && strcmp(world[getPos().x-1][getPos().y]->getSymbol(), " ")==0){ //check x-1
+        update = {getPos().x-1, getPos().y};
+
+        WorldObject* tmp = world[current.x][current.y];
+        world[update.x][update.y] = this;
+        world[current.x][current.y] = tmp;
+        setPos({update.x,update.y});
+
     }
-    else if(d == 2 && world[getPos().x+1][getPos().y+1]->getSymbol() == " "){ //check y+1
-        WorldObject* tmp = world[getPos().x][getPos().y];
-        world[getPos().x][getPos().y+1] = this;
-        world[getPos().x][getPos().y] = tmp;
+    else if(d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
+        update = {getPos().x, getPos().y+1};
+
+        WorldObject* tmp = world[current.x][current.y];
+        world[update.x][update.y] = this;
+        world[current.x][current.y] = tmp;
+        setPos({update.x,update.y});
     }
-    else if(d == 3 && world[getPos().x][getPos().y-1]->getSymbol() == " "){ //check y-1
-        WorldObject* tmp = world[getPos().x][getPos().y];
-        world[getPos().x][getPos().y-1] = this;
-        world[getPos().x][getPos().y] = tmp;
+    else if(d == 3 &&  strcmp(world[getPos().x][getPos().y-1]->getSymbol(), " ")==0){ //check y-1
+        update = {getPos().x, getPos().y-1};
+
+        WorldObject* tmp = world[current.x][current.y];
+        world[update.x][update.y] = this;
+        world[current.x][current.y] = tmp;
+        setPos({update.x,update.y});
     }
 
     return 0;
@@ -317,6 +345,8 @@ int main()
     init_pair(5,COLOR_WHITE,COLOR_GREEN);
 
     int c = 0;
+    bool started = true;
+    int n = 0;
 
     while(1)
     {
@@ -334,11 +364,30 @@ int main()
 
                 mvprintw(world[x][y]->getPos().y,world[x][y]->getPos().x,world[x][y]->getSymbol());
 
+                stringstream convert;
+                convert << n;
+                mvprintw(0,0, convert.str().c_str());
+
                 attroff(COLOR_PAIR(c));
+
+
+
             }
 
         }
+
+        for(WorldObject* soldier : soldiers)
+        {
+            if(started){
+                if (strcmp(soldier->getSymbol(), "i") == 0) {
+                    soldier->move(2);
+                }
+            }
+        }
         refresh();
+        n++;
+        sleep(1);
+
     }
 
 
