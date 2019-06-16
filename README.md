@@ -1,2 +1,2 @@
 # Thermopylae
-Simulator of the battle of Thermopylae for practice coding C++
+ASCII Simulator of the battle of Thermopylae for practice coding C++
