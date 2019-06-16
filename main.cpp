@@ -34,17 +34,19 @@ struct vector2
 
 class WorldObject{ //object that appears in the map. May be Person or an inanimate object
 
+protected:
     vector2 pos;
-    const char* symbol = "b";
+    const char* symbol = "!";
 public:
     WorldObject(vector2 pos){
         this->pos = pos;
     }
 
-    virtual const char* getSymbol();
+    const char* getSymbol();
 
-    virtual vector2 getPos(){};
-    virtual void setPos(vector2 v);
+    vector2 getPos();
+    void setPos(vector2 v);
+    int move(int d);
 
 
 
@@ -54,32 +56,25 @@ public:
 };
 
 class Nothing : public WorldObject{
-    vector2 pos;
 
 public:
-    const char* symbol = " ";
     Nothing(vector2 pos) : WorldObject(pos){
         this->pos = pos;
+            symbol = " ";
     }
 
-    const char* getSymbol();
-    vector2 getPos();
-    void setPos(vector2 v);
 
 };
 
 class Water : public WorldObject{
-    vector2 pos;
+
 
 public:
-    const char* symbol = "~";
 
     Water(vector2 pos) : WorldObject(pos){
         this->pos = pos;
+        symbol = "~";
     }
-    const char* getSymbol();
-    vector2 getPos();
-    void setPos(vector2 v);
 
 };
 
@@ -90,16 +85,13 @@ WorldObject* world[MAP_SIZE_X][MAP_SIZE_Y];
 
 
 class Rock : public WorldObject{
-    vector2 pos;
-    const char* symbol = "^";
 public:
 
     Rock(vector2 pos) : WorldObject(pos){
         this->pos = pos;
+        symbol = "^";
     }
-    const char* getSymbol();
-    vector2 getPos();
-    void setPos(vector2 v);
+
 
 
 
@@ -107,28 +99,29 @@ public:
 };
 
 class Person : public WorldObject{
-
-    vector2 pos;
+protected:
    string name;
+   string weapon;
    int skill;
    int ac;
    int health;
    int state; //attack/defend
    bool alive;
+   ;
 
 public:
     Person(vector2 pos) : WorldObject(pos){
             this->pos = pos;
     }
 
+
     int move(int d);
-    int check(int d);
     int die();
-    virtual int attack(Person* p){};
-    virtual string getName();
-    virtual int getAc(){};
-    virtual const char* getSymbol(){};
-    virtual vector2 getPos(){};
+    int attack(Person* p){};
+    string getName();
+    int getAc(){};
+    vector2 getPos(){};
+
 
 
 };
@@ -147,11 +140,7 @@ class Spartan : public Person{
     string name;
     string weapon;
     int ac;
-    int health;
-    vector2 pos;
-    int state; //attack/defend
-    bool alive;
-    const char* symbol = "@";
+
 
 public:
 
@@ -164,19 +153,10 @@ public:
         this->pos=pos;
         this->state=state;
         this->alive=alive;
+        symbol = "@";
     }
 
-    int move(int d);
-    int check(int d);
-    vector2 getPos();
-    int die();
-    int checkadj();
 
-    int attack(Person* p);
-
-    string getName();
-    const char* getSymbol();
-    int getAc();
 
 
 
@@ -189,15 +169,7 @@ public:
 
 class Persian : public Person{
 
-    int skill;
-    string name;
-    string weapon;
-    int ac;
-    int health;
-    vector2 pos;
-    int state; //attack/defend
-    bool alive;
-    const char* symbol = "i";
+
 
 public:
 
@@ -210,14 +182,10 @@ public:
         this->pos=pos;
         this->state=state;
         this->alive=alive;
+        symbol = "i";
     }
-    int move(int d);
-    int check(int d);
-    int die();
-    vector2 getPos();
-    int attack(Person p);
-    int checkadj();
-    const char* getSymbol();
+
+
 
 
 
@@ -284,52 +252,20 @@ void WorldObject::setPos(vector2 v) {
     pos = {v.x,v.y};
 }
 
+vector2 WorldObject::getPos(){
+    return pos;
+};
+
 const char* WorldObject::getSymbol() {
-    return this->symbol;
-}
-
-void Nothing::setPos(vector2 v) {
-    WorldObject::setPos(v);
-}
-
-const char* Nothing::getSymbol(){
     return symbol;
 }
 
-vector2 Nothing::getPos(){
-    return pos;
-}
-
-const char* Rock::getSymbol(){
-    return symbol;
-}
-
-vector2 Rock::getPos(){
-    return pos;
-}
-
-void Rock::setPos(vector2 v) {
-    WorldObject::setPos(v);
-}
-
-
-const char* Water::getSymbol(){
-    return symbol;
-}
-
-vector2 Water::getPos(){
-    return pos;
-}
-
-void Water::setPos(vector2 v) {
-    WorldObject::setPos(v);
-}
 
 string Person::getName(){
     return name;
 }
 
-int Person::move(int d) { //add safety checks
+int WorldObject::move(int d) { //add safety checks
     if(d == 0 && world[getPos().x+1][getPos().y]->getSymbol() == " "){ //check x+1
         WorldObject* tmp = world[getPos().x][getPos().y];
         world[getPos().x+1][getPos().y] = this;
@@ -358,37 +294,7 @@ int Person::move(int d) { //add safety checks
 }
 
 
-string Spartan::getName(){
-    return name;
-}
 
-vector2 Spartan::getPos(){
-    return pos;
-}
-
-const char* Spartan::getSymbol() {
-    return symbol;
-}
-
-int Spartan::getAc() {
-    return ac;
-}
-
-
-
-
-int Spartan::attack(Person* p){
-    p->getAc();
-
-}
-
-vector2 Persian::getPos() {
-    return pos;
-}
-
-const char* Persian::getSymbol() {
-    return symbol;
-}
 
 
 
