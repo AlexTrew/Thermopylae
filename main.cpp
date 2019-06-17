@@ -214,7 +214,10 @@ vector2 WorldObject::getPos(){
 
 int Person::attack(Person* p){
 
-        if(rand() % 20 > getAc()) p->setHealth(1);
+        if(random() % 20 > p->getAc()){
+            p->setHealth(1);
+        }
+
 
 }
 
@@ -258,7 +261,8 @@ int Person::move(int d) { //add safety checks and optimise
     vector2 update;
 
 
-    if(d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
+
+    if(getPos().x+1 <= MAP_SIZE_X && d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
         update = {getPos().x+1, getPos().y};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -268,7 +272,7 @@ int Person::move(int d) { //add safety checks and optimise
         tmp->setPos(current);
 
     }
-    else if(d == 1 && strcmp(world[getPos().x-1][getPos().y]->getSymbol(), " ")==0){ //check x-1
+    else if(getPos().x-1 >=0 && d == 1 && strcmp(world[getPos().x-1][getPos().y]->getSymbol(), " ")==0){ //check x-1
         update = {getPos().x-1, getPos().y};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -278,7 +282,7 @@ int Person::move(int d) { //add safety checks and optimise
         tmp->setPos(current);
 
     }
-    else if(d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
+    else if(getPos().y <= MAP_SIZE_Y && d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
         update = {getPos().x, getPos().y+1};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -287,7 +291,7 @@ int Person::move(int d) { //add safety checks and optimise
         setPos(update);
         tmp->setPos(current);
     }
-    else if(d == 3 &&  strcmp(world[getPos().x][getPos().y-1]->getSymbol(), " ")==0){ //check y-1
+    else if(getPos().y > 0 && d == 3 &&  strcmp(world[getPos().x][getPos().y-1]->getSymbol(), " ")==0){ //check y-1
         update = {getPos().x, getPos().y-1};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -341,7 +345,7 @@ int init() {
 
             if(strcmp(world[x][y]->getSymbol(), " ") == 0  && c<SPARTAN_ARMY_SIZE && world[x][y] && y>PASS_Y+1)
             {
-                soldiers[c] = new Spartan(10,"Spartan","spearman",15,10,{x,y},0,true);
+                soldiers[c] = new Spartan(10,"Spartan","spearman",18,20,{x,y},0,true);
                 world[x][y] = soldiers[c];
 
                 c++;
@@ -358,7 +362,7 @@ int init() {
 
             if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<PERSIAN_ARMY_SIZE && world[x][y])
             {
-                soldiers[SPARTAN_ARMY_SIZE + c] = new Persian(10,"persian","spearman",15,10,{x,y},0,true);;
+                soldiers[SPARTAN_ARMY_SIZE + c] = new Persian(10,"persian","spearman",3,10,{x,y},0,true);
                 world[x][y] = soldiers[SPARTAN_ARMY_SIZE + c];
 
 
@@ -380,7 +384,6 @@ int main()
     initscr();
     curs_set(false);
     resizeterm(MAP_SIZE_X,MAP_SIZE_Y);
-    srand(time(nullptr));
 
 
 
@@ -455,7 +458,7 @@ int main()
 
             if(started){
                 if (strcmp(soldier->getSymbol(), "i") == 0) {
-                    switch (rand() % 4){
+                    switch (random() % 4) {
                         case 0:
                             soldier->move(0);
                         case 1:
@@ -465,32 +468,36 @@ int main()
                         case 3:
                             soldier->move(2);
                     }
-                    if(strcmp(world[soldier->getPos().x][soldier->getPos().y]->getSymbol(), "@")==0){
+
+                }
+
+                    if(strcmp(soldier->getSymbol(),"@") == 0){
 
                         if(strcmp((world[soldier->getPos().x+1][soldier->getPos().y]->getSymbol()), "i")==0){
                             soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
-                            
+
+
 
                         }
                         if(strcmp((world[soldier->getPos().x-1][soldier->getPos().y]->getSymbol()), "i")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
-                            
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x-1][soldier->getPos().y]));
+
 
                         }
                         if(strcmp((world[soldier->getPos().x][soldier->getPos().y+1]->getSymbol()), "i")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
-                            
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x][soldier->getPos().y+1]));
+
 
                         }
                         if(strcmp((world[soldier->getPos().x][soldier->getPos().y-1]->getSymbol()), "i")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
-                            
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x][soldier->getPos().y-1]));
+
 
                         }
 
                     }
 
-                    if(strcmp(world[soldier->getPos().x][soldier->getPos().y]->getSymbol(), "i")==0){
+                    if(strcmp(soldier->getSymbol(), "i")==0){
 
                         if(strcmp((world[soldier->getPos().x+1][soldier->getPos().y]->getSymbol()), "@")==0){
                             soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
@@ -498,29 +505,29 @@ int main()
 
                         }
                         if(strcmp((world[soldier->getPos().x-1][soldier->getPos().y]->getSymbol()), "@")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x-1][soldier->getPos().y]));
 
 
                         }
                         if(strcmp((world[soldier->getPos().x][soldier->getPos().y+1]->getSymbol()), "@")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x][soldier->getPos().y+1]));
 
 
                         }
                         if(strcmp((world[soldier->getPos().x][soldier->getPos().y-1]->getSymbol()), "@")==0){
-                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x+1][soldier->getPos().y]));
+                            soldier->attack(static_cast<Person*>(world[soldier->getPos().x][soldier->getPos().y-1]));
 
 
                         }
 
                     }
 
-                }
+
             }
         }
         refresh();
         n++;
-        usleep(100000);
+        sleep(1);
 
     }
 
