@@ -9,7 +9,6 @@
 
 #define MAP_SIZE_X 100
 #define MAP_SIZE_Y 100
-
 #define PASS_WIDTH 30
 #define CLIFF_X 80
 #define PASS_X 30
@@ -18,7 +17,7 @@
 #define CLIFF_WATER_X 10
 #define SPARTAN_ARMY_SIZE 300
 #define PERSIAN_ARMY_SIZE 1000
-#define START_DELAY 30
+#define START_DELAY 60
 #define LOG_X_OFFSET 30
 
 
@@ -194,7 +193,7 @@ public:
 
 
 void WorldObject::setPos(vector2 v) {
-    pos = {v.x,v.y};
+    pos = v;
 }
 
 vector2 WorldObject::getPos(){
@@ -210,7 +209,7 @@ string Person::getName(){
     return name;
 }
 
-int WorldObject::move(int d) { //add safety checks
+int WorldObject::move(int d) { //add safety checks and optimise
 
 
 
@@ -221,36 +220,40 @@ int WorldObject::move(int d) { //add safety checks
     if(d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
         update = {getPos().x+1, getPos().y};
 
-        WorldObject* tmp = world[current.x][current.y];
+        WorldObject* tmp = world[update.x][update.y];
         world[update.x][update.y] = this;
         world[current.x][current.y] = tmp;
-        setPos({update.x,update.y});
+        setPos(update);
+        tmp->setPos(current);
 
     }
     else if(d == 1 && strcmp(world[getPos().x-1][getPos().y]->getSymbol(), " ")==0){ //check x-1
         update = {getPos().x-1, getPos().y};
 
-        WorldObject* tmp = world[current.x][current.y];
+        WorldObject* tmp = world[update.x][update.y];
         world[update.x][update.y] = this;
         world[current.x][current.y] = tmp;
-        setPos({update.x,update.y});
+        setPos(update);
+        tmp->setPos(current);
 
     }
     else if(d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
         update = {getPos().x, getPos().y+1};
 
-        WorldObject* tmp = world[current.x][current.y];
+        WorldObject* tmp = world[update.x][update.y];
         world[update.x][update.y] = this;
         world[current.x][current.y] = tmp;
-        setPos({update.x,update.y});
+        setPos(update);
+        tmp->setPos(current);
     }
     else if(d == 3 &&  strcmp(world[getPos().x][getPos().y-1]->getSymbol(), " ")==0){ //check y-1
         update = {getPos().x, getPos().y-1};
 
-        WorldObject* tmp = world[current.x][current.y];
+        WorldObject* tmp = world[update.x][update.y];
         world[update.x][update.y] = this;
         world[current.x][current.y] = tmp;
-        setPos({update.x,update.y});
+        setPos(update);
+        tmp->setPos(current);
     }
 
     return 0;
@@ -376,22 +379,32 @@ int main()
         }
 
         if(n<START_DELAY/2) mvprintw(0,LOG_X_OFFSET,"Persian commander: \" Throw down your weapons! \"");
-        if(n>=START_DELAY/2 && n<START_DELAY) mvprintw(0,LOG_X_OFFSET, "Lionidas: \" Come and take them! \"");
+        if(n>=START_DELAY/2 && n<START_DELAY) mvprintw(0,LOG_X_OFFSET, "Leonidas: \" Come and take them! \"");
         if(n>=START_DELAY) started = true;
 
+        srand(time(0));
 
         for(WorldObject* soldier : soldiers) //TODO add randomness, pathfinding, and space filling
         {
             if(started){
                 if (strcmp(soldier->getSymbol(), "i") == 0) {
-                    soldier->move(2);
+                    switch (rand() % 4){
+                        case 0:
+                            soldier->move(0);
+                        case 1:
+                            soldier->move(1);
+                        case 2:
+                            soldier->move(2);
+                        case 3:
+                            soldier->move(2);
+                    }
                  //   attack();
                 }
             }
         }
         refresh();
         n++;
-        usleep(200000);
+        usleep(50000);
 
     }
 
