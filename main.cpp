@@ -17,7 +17,7 @@
 #define CLIFF_WATER_X 10
 #define SPARTAN_ARMY_SIZE 300
 #define PERSIAN_ARMY_SIZE 1000
-#define START_DELAY 60
+#define START_DELAY 40
 #define LOG_X_OFFSET 30
 
 
@@ -130,11 +130,10 @@ public:
 
     int move(int d);
     int die();
-    string getName();
     int getAc();
     int attack(Person* p);
     int getHealth();
-    bool getAlive();
+    int getSkill();
     void setHealth(int dif);
 
 
@@ -214,10 +213,12 @@ vector2 WorldObject::getPos(){
 
 int Person::attack(Person* p){
 
-        if(random() % 20 > p->getAc()){
+    if(random() % 20 > p->getSkill()) {
+        if (random() % 20 > p->getAc()) {
+
             p->setHealth(1);
         }
-
+    }
 
 }
 
@@ -237,20 +238,16 @@ const char* WorldObject::getSymbol() {
     return symbol;
 }
 
-
-
-string Person::getName(){
-    return name;
+int Person::getSkill() {
+    return skill;
 }
 
 int Person::die(){
     alive = false;
     deleting = true;
+    return 0;
 }
 
-bool Person::getAlive() {
-    return alive;
-}
 
 
 int Person::move(int d) { //add safety checks and optimise
@@ -262,7 +259,7 @@ int Person::move(int d) { //add safety checks and optimise
 
 
 
-    if(getPos().x+1 <= MAP_SIZE_X && d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
+    if(getPos().x+1 < MAP_SIZE_X && d == 0 && strcmp(world[getPos().x+1][getPos().y]->getSymbol(), " ")==0){ //check x+1
         update = {getPos().x+1, getPos().y};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -282,7 +279,7 @@ int Person::move(int d) { //add safety checks and optimise
         tmp->setPos(current);
 
     }
-    else if(getPos().y <= MAP_SIZE_Y && d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
+    else if(getPos().y+1 < MAP_SIZE_Y && d == 2 && strcmp(world[getPos().x][getPos().y+1]->getSymbol(), " ")==0){ //check y+1
         update = {getPos().x, getPos().y+1};
 
         WorldObject* tmp = world[update.x][update.y];
@@ -299,6 +296,9 @@ int Person::move(int d) { //add safety checks and optimise
         world[current.x][current.y] = tmp;
         setPos(update);
         tmp->setPos(current);
+    }
+    else{
+        return 0;
     }
 
     return 0;
@@ -345,7 +345,7 @@ int init() {
 
             if(strcmp(world[x][y]->getSymbol(), " ") == 0  && c<SPARTAN_ARMY_SIZE && world[x][y] && y>PASS_Y+1)
             {
-                soldiers[c] = new Spartan(10,"Spartan","spearman",18,20,{x,y},0,true);
+                soldiers[c] = new Spartan(15,"Spartan","spearman",18,50,{x,y},0,true);
                 world[x][y] = soldiers[c];
 
                 c++;
@@ -362,7 +362,7 @@ int init() {
 
             if(strcmp(world[x][y]->getSymbol()," ") == 0  && c<PERSIAN_ARMY_SIZE && world[x][y])
             {
-                soldiers[SPARTAN_ARMY_SIZE + c] = new Persian(10,"persian","spearman",3,10,{x,y},0,true);
+                soldiers[SPARTAN_ARMY_SIZE + c] = new Persian(10,"persian","spearman",3,30,{x,y},0,true);
                 world[x][y] = soldiers[SPARTAN_ARMY_SIZE + c];
 
 
@@ -452,20 +452,36 @@ int main()
 
         for(Person* soldier : soldiers) //TODO add randomness, pathfinding, and space filling
         {
+            int lr = 0;
+
             if(soldier->getDeleting() == true) world[soldier->getPos().x][soldier->getPos().y] = new Nothing({soldier->getPos().x,soldier->getPos().y});
 
             if(soldier->getHealth()<=0) soldier->die();
 
             if(started){
                 if (strcmp(soldier->getSymbol(), "i") == 0) {
-                    switch (random() % 4) {
+
+
+                    if(soldier->getPos().x< PASS_X + (PASS_WIDTH/2)-10){
+                        lr = 0;
+                    }
+                    else if(soldier->getPos().x>= PASS_X + (PASS_WIDTH/2)+10){
+                        lr=1;
+                    }
+                    else{
+                        lr = (random() % 3);
+                    }
+
+                    switch (random() % 5) {
                         case 0:
                             soldier->move(0);
                         case 1:
                             soldier->move(1);
                         case 2:
-                            soldier->move(2);
+                            soldier->move(lr);
                         case 3:
+                            soldier->move(2);
+                        default:
                             soldier->move(2);
                     }
 
@@ -527,7 +543,7 @@ int main()
         }
         refresh();
         n++;
-        sleep(1);
+        usleep(100000);
 
     }
 
