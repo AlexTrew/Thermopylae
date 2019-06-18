@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
-project(practice)
+project(Thermopylae)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(ncurses Thermopylae/main.cpp )
+add_library(ncurses main.cpp )
 
-add_executable(practice  Thermopylae/main.cpp Thermopylae/Person.cpp Thermopylae/Person.h Thermopylae/WorldObject.cpp Thermopylae/WorldObject.h Thermopylae/Spartan.h Thermopylae/Persian.h Thermopylae/Water.h Thermopylae/Rock.h Thermopylae/Nothing.h Thermopylae/vector2.h Thermopylae/Body.h)
+add_executable(Thermopylae  main.cpp Person.cpp Person.h WorldObject.cpp WorldObject.h Spartan.h Persian.h Water.h Rock.h Nothing.h vector2.h Body.h)
 
-target_link_libraries(practice -lncurses)
+target_link_libraries(Thermopylae -lncurses)
 
