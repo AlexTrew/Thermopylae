@@ -401,7 +401,7 @@ int main()
     bool started = false;
     int n = 0;
 
-    while(1)
+    while(n<400)
     {
         for (int y = 0; y < MAP_SIZE_Y; y++)
         {
@@ -547,8 +547,20 @@ int main()
 
     }
 
-
-
     endwin();
+
+
+    for(Person* p :soldiers){
+        delete p;
+    }
+
+    for(int x; x < MAP_SIZE_X; x++){
+        for(int y; y < MAP_SIZE_Y; y++)
+            delete world[x][y];
+    }
+
+    cout << "program exited successfully" << endl;
+
+
     exit(EXIT_SUCCESS);
 }
