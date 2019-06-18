@@ -14,6 +14,7 @@
 #include "Rock.h"
 #include "Water.h"
 #include "Nothing.h"
+#include "Body.h"
 
 
 
@@ -25,7 +26,7 @@
 #define CLIFF_WATER_X 10
 #define SPARTAN_ARMY_SIZE 300
 #define PERSIAN_ARMY_SIZE 1000
-#define START_DELAY 40
+#define START_DELAY 100
 #define LOG_X_OFFSET 30
 #define SIM_LENGTH 6000
 
@@ -160,7 +161,7 @@ int main() {
         if (n >= START_DELAY) started = true;
 
 
-        auto i = soldiers.begin();
+        int i = 0;
 
         for (Person *soldier : soldiers)
         {
@@ -168,8 +169,7 @@ int main() {
 
             if (soldier->getDeleting()){
                 world[soldier->getPos().x][soldier->getPos().y] = new Nothing({soldier->getPos().x, soldier->getPos().y});
-                soldiers.erase(i);
-                i -= 1;
+                 soldiers.at(i) = new Body();
             }
 
 
@@ -259,7 +259,7 @@ int main() {
         }
         refresh();
         n++;
-        usleep(30000);
+        usleep(50000);
 
     }
 
@@ -270,8 +270,8 @@ int main() {
         delete p;
     }
 
-    for (int x; x < MAP_SIZE_X; x++) {
-        for (int y; y < MAP_SIZE_Y; y++)
+    for (int x=0; x < MAP_SIZE_X; x++) {
+        for (int y=0; y < MAP_SIZE_Y; y++)
             delete world[x][y];
     }
 
