@@ -67,7 +67,7 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < SPARTAN_ARMY_SIZE && world[x][y] && y > PASS_Y + 1) {
-                soldiers.push_back( new Spartan(15, "Spartan", "spearman", 15, 50, {x, y}, 0, true));
+                soldiers.push_back( new Spartan(10 + random() % 6, "Spartan", "spearman", 13, 30, {x, y}, 0, true));
                 world[x][y] = soldiers.at(c);
 
                 c++;
@@ -81,8 +81,10 @@ int init() {
     {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
+
+
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < PERSIAN_ARMY_SIZE && world[x][y]) {
-                soldiers.push_back( new Persian(10, "persian", "spearman", 3, 30, {x, y}, 0, true));
+                soldiers.push_back( new Persian(6 + random() % 5, "persian", "spearman", 5, 30, {x, y}, 0, true));
                 world[x][y] = soldiers.at(SPARTAN_ARMY_SIZE + c);
 
 
@@ -109,7 +111,7 @@ int main() {
     init_pair(2, COLOR_BLACK, COLOR_WHITE);
     init_pair(3, COLOR_GREEN, COLOR_GREEN);
     init_pair(4, COLOR_WHITE, COLOR_GREEN);
-    init_pair(5, COLOR_WHITE, COLOR_GREEN);
+    init_pair(5, COLOR_BLACK, COLOR_GREEN);
     init_pair(6, COLOR_WHITE, COLOR_RED);
 
 
