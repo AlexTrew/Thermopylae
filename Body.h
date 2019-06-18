@@ -9,7 +9,10 @@
 
 class Body : public Person{
 public:
-    Body() : Person(pos){};
+    Body() : Person(pos){
+        this->symbol = " ";
+        this->alive = false;
+    };
 
 };
 

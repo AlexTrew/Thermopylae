@@ -67,7 +67,7 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < SPARTAN_ARMY_SIZE && world[x][y] && y > PASS_Y + 1) {
-                soldiers.push_back( new Spartan(10 + random() % 6, "Spartan", "spearman", 13, 30, {x, y}, 0, true));
+                soldiers.push_back( new Spartan(13 + random() % 6, "Spartan", "spearman", 13, 30, {x, y}, 0, true));
                 world[x][y] = soldiers.at(c);
 
                 c++;
@@ -131,19 +131,15 @@ int main() {
                 if (strcmp(world[x][y]->getSymbol(), "i") == 0) c = 5;
 
 
-                if (world[x][y]->getDeleting() == true) {
+                if (world[x][y]->getDeleting()) {
 
                     attron(COLOR_PAIR(6));
-
                     mvprintw(world[x][y]->getPos().y, world[x][y]->getPos().x, world[x][y]->getSymbol());
-
                     attroff(COLOR_PAIR(6));
                 } else {
 
                     attron(COLOR_PAIR(c));
-
                     mvprintw(world[x][y]->getPos().y, world[x][y]->getPos().x, world[x][y]->getSymbol());
-
                     attroff(COLOR_PAIR(c));
 
                 }
@@ -170,92 +166,95 @@ int main() {
             int lr = 0;
 
             if (soldier->getDeleting()){
-                world[soldier->getPos().x][soldier->getPos().y] = new Nothing({soldier->getPos().x, soldier->getPos().y});
-                 soldiers.at(i) = new Body();
-            }
-
-
-            if (soldier->getHealth() <= 0) soldier->die();
-
-            if (started) {
-                if (strcmp(soldier->getSymbol(), "i") == 0) {
-
-
-                    if (soldier->getPos().x < PASS_X + (PASS_WIDTH / 2) - 10) {
-                        lr = 0;
-                    } else if (soldier->getPos().x >= PASS_X + (PASS_WIDTH / 2) + 10) {
-                        lr = 1;
-                    } else {
-                        lr = (random() % 3);
-                    }
-
-                    switch (random() % 5) {
-                        case 0:
-                            soldier->move(0,world);
-                        case 1:
-                            soldier->move(1,world);
-                        case 2:
-                            soldier->move(lr,world);
-                        case 3:
-                            soldier->move(2,world);
-                        default:
-                            soldier->move(2,world);
-                    }
-
-                }
-
-                if (strcmp(soldier->getSymbol(), "@") == 0) {
-
-                    if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x - 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x - 1][soldier->getPos().y]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x][soldier->getPos().y + 1]->getSymbol()), "i") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y + 1]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x][soldier->getPos().y - 1]->getSymbol()), "i") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y - 1]));
-
-
-                    }
-
-                }
-
-                if (strcmp(soldier->getSymbol(), "i") == 0) {
-
-                    if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "@") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x - 1][soldier->getPos().y]->getSymbol()), "@") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x - 1][soldier->getPos().y]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x][soldier->getPos().y + 1]->getSymbol()), "@") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y + 1]));
-
-
-                    }
-                    if (strcmp((world[soldier->getPos().x][soldier->getPos().y - 1]->getSymbol()), "@") == 0) {
-                        soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y - 1]));
-
-
-                    }
-
-                }
-
+                soldiers.at(i) = new Body();
+                world[soldier->getPos().x][soldier->getPos().y] = soldiers.at(i);
 
             }
+
+            if(soldier->isAlive()){
+                if (soldier->getHealth() <= 0) soldier->die();
+
+                if (started) {
+                    if (strcmp(soldier->getSymbol(), "i") == 0) {
+
+
+                        if (soldier->getPos().x < PASS_X + (PASS_WIDTH / 2) - 10) {
+                            lr = 0;
+                        } else if (soldier->getPos().x >= PASS_X + (PASS_WIDTH / 2) + 10) {
+                            lr = 1;
+                        } else {
+                            lr = (random() % 3);
+                        }
+
+                        switch (random() % 5) {
+                            case 0:
+                                soldier->move(0,world);
+                            case 1:
+                                soldier->move(1,world);
+                            case 2:
+                                soldier->move(lr,world);
+                            case 3:
+                                soldier->move(2,world);
+                            default:
+                                soldier->move(2,world);
+                        }
+
+                    }
+
+                    if (strcmp(soldier->getSymbol(), "@") == 0) {
+
+                        if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x - 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x - 1][soldier->getPos().y]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x][soldier->getPos().y + 1]->getSymbol()), "i") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y + 1]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x][soldier->getPos().y - 1]->getSymbol()), "i") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y - 1]));
+
+
+                        }
+
+                    }
+
+                    if (strcmp(soldier->getSymbol(), "i") == 0) {
+
+                        if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "@") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x - 1][soldier->getPos().y]->getSymbol()), "@") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x - 1][soldier->getPos().y]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x][soldier->getPos().y + 1]->getSymbol()), "@") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y + 1]));
+
+
+                        }
+                        if (strcmp((world[soldier->getPos().x][soldier->getPos().y - 1]->getSymbol()), "@") == 0) {
+                            soldier->attack(static_cast<Person *>(world[soldier->getPos().x][soldier->getPos().y - 1]));
+
+
+                        }
+
+                    }
+
+
+                }
+            }
+
 
             i++;
         }
