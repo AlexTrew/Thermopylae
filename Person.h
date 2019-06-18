@@ -24,6 +24,7 @@ public:
     }
 
 
+
     int move(int d, WorldObject*  w[][MAP_SIZE_Y]);
 
     int die();

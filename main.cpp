@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include <cstring>
+#include <vector>
 
 #include "WorldObject.h"
 #include "Person.h"
@@ -26,6 +27,7 @@
 #define PERSIAN_ARMY_SIZE 1000
 #define START_DELAY 40
 #define LOG_X_OFFSET 30
+#define SIM_LENGTH 6000
 
 
 using namespace std;
@@ -34,8 +36,7 @@ using namespace std;
 
 WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y];
 
-Person *soldiers[SPARTAN_ARMY_SIZE + PERSIAN_ARMY_SIZE];
-
+vector<Person *> soldiers;
 
 int init() {
 
@@ -65,8 +66,8 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < SPARTAN_ARMY_SIZE && world[x][y] && y > PASS_Y + 1) {
-                soldiers[c] = new Spartan(15, "Spartan", "spearman", 18, 50, {x, y}, 0, true);
-                world[x][y] = soldiers[c];
+                soldiers.push_back( new Spartan(15, "Spartan", "spearman", 15, 50, {x, y}, 0, true));
+                world[x][y] = soldiers.at(c);
 
                 c++;
             }
@@ -80,8 +81,8 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < PERSIAN_ARMY_SIZE && world[x][y]) {
-                soldiers[SPARTAN_ARMY_SIZE + c] = new Persian(10, "persian", "spearman", 3, 30, {x, y}, 0, true);
-                world[x][y] = soldiers[SPARTAN_ARMY_SIZE + c];
+                soldiers.push_back( new Persian(10, "persian", "spearman", 3, 30, {x, y}, 0, true));
+                world[x][y] = soldiers.at(SPARTAN_ARMY_SIZE + c);
 
 
                 c++;
@@ -115,7 +116,7 @@ int main() {
     bool started = false;
     int n = 0;
 
-    while (n < 400) {
+    while (n < SIM_LENGTH) {
         for (int y = 0; y < MAP_SIZE_Y; y++) {
             for (int x = 0; x < MAP_SIZE_X; x++) //print map
             {
@@ -125,6 +126,7 @@ int main() {
                 if (strcmp(world[x][y]->getSymbol(), " ") == 0) c = 3;
                 if (strcmp(world[x][y]->getSymbol(), "@") == 0) c = 4;
                 if (strcmp(world[x][y]->getSymbol(), "i") == 0) c = 5;
+
 
                 if (world[x][y]->getDeleting() == true) {
 
@@ -158,13 +160,18 @@ int main() {
         if (n >= START_DELAY) started = true;
 
 
-        for (Person *soldier : soldiers) //TODO add randomness, pathfinding, and space filling
+        auto i = soldiers.begin();
+
+        for (Person *soldier : soldiers)
         {
             int lr = 0;
 
-            if (soldier->getDeleting() == true)
-                world[soldier->getPos().x][soldier->getPos().y] = new Nothing(
-                        {soldier->getPos().x, soldier->getPos().y});
+            if (soldier->getDeleting()){
+                world[soldier->getPos().x][soldier->getPos().y] = new Nothing({soldier->getPos().x, soldier->getPos().y});
+                soldiers.erase(i);
+                i -= 1;
+            }
+
 
             if (soldier->getHealth() <= 0) soldier->die();
 
@@ -247,10 +254,12 @@ int main() {
 
 
             }
+
+            i++;
         }
         refresh();
         n++;
-        usleep(100000);
+        usleep(30000);
 
     }
 
