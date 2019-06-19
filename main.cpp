@@ -155,8 +155,8 @@ int main() {
         }
 
         if (n < START_DELAY / 3) {
-            mvprintw(PASS_Y-10, LOG_X_OFFSET+5, "\"ASCII Battle of Thermopylae\"" );
-            mvprintw(PASS_Y-9, LOG_X_OFFSET+5, "Written by Alex Trew, 2019" );
+            mvprintw(PASS_Y-13, LOG_X_OFFSET+5, "\"ASCII Battle of Thermopylae\"" );
+            mvprintw(PASS_Y-9, LOG_X_OFFSET+6, "written by Alex Trew, 2019" );
         }
         if (n < (START_DELAY / 3) * 2 && n >= START_DELAY/3 ) mvprintw(0, LOG_X_OFFSET, "Persian commander: \" Throw down your weapons! \"");
         if (n >= ( START_DELAY/3)*2 && n < START_DELAY) mvprintw(0, LOG_X_OFFSET, "Leonidas: \" Come and take them! \"");
