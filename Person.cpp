@@ -39,6 +39,10 @@ int Person::die() {
     return 0;
 }
 
+bool Person::isAlive(){
+    return alive;
+}
+
 
 int Person::move(int d,  WorldObject*  world[][MAP_SIZE_Y]) { //add safety checks and optimise
 

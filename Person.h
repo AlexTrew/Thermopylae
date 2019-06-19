@@ -37,6 +37,8 @@ public:
 
     int getSkill();
 
+    bool isAlive();
+
     void setHealth(int dif);
 
 
