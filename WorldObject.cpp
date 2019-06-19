@@ -9,10 +9,14 @@ void WorldObject::setPos(vector2 v) {
     pos = v;
 }
 
-vector2 WorldObject::getPos() {
+const vector2 WorldObject::getPos() {
     return pos;
 }
 
 const char *WorldObject::getSymbol() {
     return symbol;
+}
+
+const bool  WorldObject::isDeleting() {
+    return deleting;
 }

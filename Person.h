@@ -29,15 +29,15 @@ public:
 
     int die();
 
-    int getAc();
+    const int getAc();
 
-    int attack(Person *p);
+    const void attack(Person *p);
 
-    int getHealth();
+    const int getHealth();
 
-    int getSkill();
+    const int getSkill();
 
-    bool isAlive();
+    const bool isAlive();
 
     void setHealth(int dif);
 

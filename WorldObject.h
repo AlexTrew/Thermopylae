@@ -31,13 +31,11 @@ public:
 
     const char *getSymbol();
 
-    vector2 getPos();
+    const vector2 getPos();
 
     void setPos(vector2 v);
 
-    bool getDeleting() {
-        return deleting;
-    }
+    const bool isDeleting();
 
 
 };

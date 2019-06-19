@@ -35,9 +35,9 @@ using namespace std;
 
 
 
-WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y];
+static WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y];
 
-vector<Person *> soldiers;
+static vector<Person *> soldiers;
 
 int init() {
 
@@ -67,7 +67,7 @@ int init() {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < SPARTAN_ARMY_SIZE && world[x][y] && y > PASS_Y + 1) {
-                soldiers.push_back( new Spartan(13 + random() % 6, "Spartan", "spearman", 13, 30, {x, y}, 0, true));
+                soldiers.push_back( new Spartan(12 + random() % 6, "Spartan", "spearman", 13, 30, {x, y}, 0, true));
                 world[x][y] = soldiers.at(c);
 
                 c++;
@@ -131,7 +131,7 @@ int main() {
                 if (strcmp(world[x][y]->getSymbol(), "i") == 0) c = 5;
 
 
-                if (world[x][y]->getDeleting()) {
+                if (world[x][y]->isDeleting()) {
 
                     attron(COLOR_PAIR(6));
                     mvprintw(world[x][y]->getPos().y, world[x][y]->getPos().x, world[x][y]->getSymbol());
@@ -165,7 +165,7 @@ int main() {
         {
             int lr = 0;
 
-            if (soldier->getDeleting()){
+            if (soldier->isDeleting()){
                 soldiers.at(i) = new Body();
                 world[soldier->getPos().x][soldier->getPos().y] = soldiers.at(i);
 
@@ -267,9 +267,7 @@ int main() {
     endwin();
 
 
-    for (Person *p :soldiers) {
-        delete p;
-    }
+
 
     for (int x=0; x < MAP_SIZE_X; x++) {
         for (int y=0; y < MAP_SIZE_Y; y++)
