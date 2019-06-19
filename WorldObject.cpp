@@ -5,7 +5,7 @@
 #include "WorldObject.h"
 
 
-void WorldObject::setPos(vector2 v) {
+void WorldObject::setPos(const vector2& v) {
     pos = v;
 }
 

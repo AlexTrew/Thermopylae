@@ -33,7 +33,7 @@ public:
 
     const vector2 getPos();
 
-    void setPos(vector2 v);
+    void setPos(const vector2& v);
 
     const bool isDeleting();
 

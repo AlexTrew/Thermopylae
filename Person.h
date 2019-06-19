@@ -31,7 +31,7 @@ public:
 
     const int getAc();
 
-    const void attack(Person *p);
+    const void attack(Person* p);
 
     const int getHealth();
 
@@ -39,7 +39,7 @@ public:
 
     const bool isAlive();
 
-    void setHealth(int dif);
+    void setHealth(const int& dif);
 
 
 };

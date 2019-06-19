@@ -28,7 +28,7 @@
 #define PERSIAN_ARMY_SIZE 1000
 #define START_DELAY 100
 #define LOG_X_OFFSET 30
-#define SIM_LENGTH 6000
+#define SIM_LENGTH 3000
 
 
 using namespace std;
@@ -200,7 +200,7 @@ int main() {
                         }
 
                     }
-
+//fix by using cell contents rather than WorldObject location
                     if (strcmp(soldier->getSymbol(), "@") == 0) {
 
                         if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "i") == 0) {

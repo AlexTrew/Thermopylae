@@ -4,7 +4,7 @@
 
 #include "Person.h"
 
-const void Person::attack(Person *p) {
+const void Person::attack(Person*  p) {
 
     if (random() % 20 > p->getSkill()) {
         if (random() % 20 > p->getAc()) {
@@ -22,7 +22,7 @@ const int Person::getHealth() {
     return health;
 }
 
-void Person::setHealth(int dif) {
+void Person::setHealth(const int& dif) {
     health = health - dif;
 }
 
