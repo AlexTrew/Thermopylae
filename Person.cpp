@@ -10,6 +10,9 @@ const void Person::attack(Person*  p) {
         if (random() % 20 > p->getAc()) {
 
             p->setHealth(1);
+            if(p->getHealth()<=0){
+                Narrator::printMsg(this,p, random() % 31);
+            }
         }
     }
 }
@@ -20,6 +23,10 @@ const int Person::getAc() {
 
 const int Person::getHealth() {
     return health;
+}
+
+const char* Person::getName() {
+    return name;
 }
 
 void Person::setHealth(const int& dif) {
@@ -36,6 +43,7 @@ int Person::die() {
     alive = false;
     deleting = true;
     return 0;
+
 }
 
 const bool Person::isAlive(){

@@ -13,7 +13,7 @@ class Spartan : public Person {
 
 public:
 
-    Spartan(int skill, string name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(
+    Spartan(int skill, const char* name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(
             pos) {
         this->skill = skill;
         this->name = name;

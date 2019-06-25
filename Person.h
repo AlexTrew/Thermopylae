@@ -3,6 +3,7 @@
 //
 
 #include "WorldObject.h"
+#include "Narrator.h"
 
 #ifndef PRACTICE_PERSON_H
 #define PRACTICE_PERSON_H
@@ -10,7 +11,7 @@
 
 class Person : public WorldObject {
 protected:
-    string name;
+    const char* name;
     string weapon;
     int skill;
     int ac;
@@ -36,6 +37,8 @@ public:
     const int getHealth();
 
     const int getSkill();
+
+    const char* getName();
 
     const bool isAlive();
 

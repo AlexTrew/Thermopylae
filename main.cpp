@@ -29,6 +29,8 @@
 #define START_DELAY 130
 #define LOG_X_OFFSET 30
 #define SIM_LENGTH 3000
+#define MSG_DISPLAY_TIME 1
+#define NO_OF_MESSAGES 5
 
 
 using namespace std;
@@ -38,6 +40,7 @@ using namespace std;
 static WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y];
 
 static vector<Person *> soldiers;
+
 
 int init() {
 
@@ -118,6 +121,11 @@ int main() {
     int c = 0;
     bool started = false;
     int n = 0;
+    int line = 0;
+    int msgNo = 1;
+
+
+    string display[NO_OF_MESSAGES];
 
     while (n < SIM_LENGTH) {
         for (int y = 0; y < MAP_SIZE_Y; y++) {
@@ -145,9 +153,6 @@ int main() {
                 }
 
 
-                stringstream convert;
-                convert << n;
-                mvprintw(0, 0, convert.str().c_str());
 
 
             }
@@ -203,9 +208,7 @@ int main() {
                                 soldier->move(2,world);
                         }
 
-                    }
-//fix by using cell contents rather than WorldObject location
-                    if (strcmp(soldier->getSymbol(), "@") == 0) {
+                    }if (strcmp(soldier->getSymbol(), "@") == 0) {
 
                         if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
                             soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
@@ -262,6 +265,21 @@ int main() {
 
             i++;
         }
+
+        if(!Narrator::messages.empty() && n % MSG_DISPLAY_TIME == 0){
+            display[msgNo % NO_OF_MESSAGES] = Narrator::messages.front();
+            ++msgNo;
+            Narrator::messages.pop();
+        }
+
+        unsigned int j = NO_OF_MESSAGES - 1;
+        for(string& message : display){
+            mvprintw( j % NO_OF_MESSAGES,LOG_X_OFFSET,message.c_str());
+            j++;
+        }
+
+
+
         refresh();
         n++;
         usleep(50000);
