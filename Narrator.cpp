@@ -11,6 +11,8 @@
 queue<string> Narrator::messages;
 
 
+
+
 void Narrator::printMsg(Person* a, Person* d, int seed) {
 
     stringstream str;
@@ -236,7 +238,25 @@ void Narrator::printMsg(Person* a, Person* d, int seed) {
             messages.push(str.str().c_str());
             str.str(std::string());
 
+        case 31:
+            str << d->getName() << " didn't stand up well to " << a->getName() << "'s spear";
+            messages.push(str.str().c_str());
+            str.str(std::string());
 
+        case 32:
+            str << d->getName() << " sustained a crushing blow to the chest from " << a->getName() << " ";
+            messages.push(str.str().c_str());
+            str.str(std::string());
+
+        case 33:
+            str << d->getName() << " sustained a crushing blow to the head from " << a->getName() << "";
+            messages.push(str.str().c_str());
+            str.str(std::string());
+
+        case 34:
+            str << d->getName() << " sustained a crushing blow to the arm from " << a->getName() << " ";
+            messages.push(str.str().c_str());
+            str.str(std::string());
 
     }
 }

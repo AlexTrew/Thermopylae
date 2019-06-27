@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <ncurses.h>
 #include <unistd.h>
 #include <cstring>
@@ -18,35 +18,33 @@
 
 
 
-#define PASS_WIDTH 30
-#define CLIFF_X 80
-#define PASS_X 30
-#define PASS_Y 28
-#define WATER_X 20
-#define CLIFF_WATER_X 10
-#define SPARTAN_ARMY_SIZE 300
-#define PERSIAN_ARMY_SIZE 1000
-#define START_DELAY 130
-#define LOG_X_OFFSET 30
-#define SIM_LENGTH 3000
-#define MSG_DISPLAY_TIME 1
-#define NO_OF_MESSAGES 5
+#define PASS_WIDTH 30 //with of the hot gates
+#define CLIFF_X 80 // x coordinate at which the cliff will be drawn
+#define PASS_X 30 // x coordinate at which the west side of the hot gates will start
+#define PASS_Y 28 //y coordinate at which the hot gates will appear
+#define WATER_X 20 // x coordinate before which water will be drawn
+#define CLIFF_WATER_X 10 // x coordinate at which the west cliff will begin
+#define SPARTAN_ARMY_SIZE 300 // size of the spartan army
+#define PERSIAN_ARMY_SIZE 1000 //size of the persian army
+#define START_DELAY 130 // no. of frames of text before the simulation begins
+#define LOG_X_OFFSET 30 // x coordinate of text messages
+#define SIM_LENGTH 3000 // number of frames before the simulation closes
+#define MSG_DISPLAY_TIME 1 //number of frames for which a message will be displayed
+#define NO_OF_MESSAGES 8 // maximum number of messages to be drawn on the screen at once
+#define FRAME_DELAY 100000 //time delay between each frame in seconds
 
 
 using namespace std;
 
 
+static WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y]; //array containing object placement info
 
-static WorldObject *world[MAP_SIZE_X][MAP_SIZE_Y];
-
-static vector<Person *> soldiers;
+static vector<Person *> soldiers; //pointers to soldiers
 
 
 int init() {
 
-    //object creation
 
-    //WorldObject Placement
 
     for (int x = 0; x < MAP_SIZE_X; x++) //populate the world with non human world objects
     {
@@ -66,7 +64,7 @@ int init() {
 
     int c = 0;
 
-    for (int y = 0; y < MAP_SIZE_Y; y++) {
+    for (int y = 0; y < MAP_SIZE_Y; y++) { //create and populate the world with spartans
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
             if (strcmp(world[x][y]->getSymbol(), " ") == 0 && c < SPARTAN_ARMY_SIZE && world[x][y] && y > PASS_Y + 1) {
@@ -80,7 +78,7 @@ int init() {
 
     c = 0;
 
-    for (int y = 0; y < MAP_SIZE_Y; y++) //populate the world with non human world objects
+    for (int y = 0; y < MAP_SIZE_Y; y++) //create and populate the world with persians
     {
         for (int x = 0; x < MAP_SIZE_X; x++) {
 
@@ -109,6 +107,8 @@ int main() {
     resizeterm(MAP_SIZE_X, MAP_SIZE_Y);
 
 
+    //set colour pairings
+
     start_color();
     init_pair(1, COLOR_CYAN, COLOR_BLUE);
     init_pair(2, COLOR_BLACK, COLOR_WHITE);
@@ -121,15 +121,14 @@ int main() {
     int c = 0;
     bool started = false;
     int n = 0;
-    int line = 0;
     int msgNo = 1;
 
 
-    string display[NO_OF_MESSAGES];
+    string display[NO_OF_MESSAGES]; //store messages currently being drawn on the screen
 
-    while (n < SIM_LENGTH) {
+    while (n < SIM_LENGTH) { //main loop: to be executed per frame
         for (int y = 0; y < MAP_SIZE_Y; y++) {
-            for (int x = 0; x < MAP_SIZE_X; x++) //print map
+            for (int x = 0; x < MAP_SIZE_X; x++) //attach a colour pairing to each character type
             {
 
                 if (strcmp(world[x][y]->getSymbol(), "~") == 0) c = 1;
@@ -139,12 +138,12 @@ int main() {
                 if (strcmp(world[x][y]->getSymbol(), "i") == 0) c = 5;
 
 
-                if (world[x][y]->isDeleting()) {
+                if (world[x][y]->isDeleting()) { //change the colour of a dying soldier to a red background
 
                     attron(COLOR_PAIR(6));
                     mvprintw(world[x][y]->getPos().y, world[x][y]->getPos().x, world[x][y]->getSymbol());
                     attroff(COLOR_PAIR(6));
-                } else {
+                } else { // colourise each cell on the screen with the appropriate colours
 
                     attron(COLOR_PAIR(c));
                     mvprintw(world[x][y]->getPos().y, world[x][y]->getPos().x, world[x][y]->getSymbol());
@@ -159,7 +158,7 @@ int main() {
 
         }
 
-        if (n < START_DELAY / 3) {
+        if (n < START_DELAY / 3) { //show credits and messages
             mvprintw(PASS_Y-13, LOG_X_OFFSET+5, "\"ASCII Battle of Thermopylae\"" );
             mvprintw(PASS_Y-9, LOG_X_OFFSET+6, "written by Alex Trew, 2019" );
         }
@@ -170,17 +169,17 @@ int main() {
 
         int i = 0;
 
-        for (Person *soldier : soldiers)
+        for (Person *soldier : soldiers) //solider computations loop
         {
-            int lr = 0;
+            int lr = 0; //bias as to the direction the persians will randomly move (left/right)
 
-            if (soldier->isDeleting()){
+            if (soldier->isDeleting()){ //replace dead soldier with a body ()
                 soldiers.at(i) = new Body();
                 world[soldier->getPos().x][soldier->getPos().y] = soldiers.at(i);
 
             }
 
-            if(soldier->isAlive()){
+            if(soldier->isAlive()){ //decide which direction persians move while advancing
                 if (soldier->getHealth() <= 0) soldier->die();
 
                 if (started) {
@@ -195,7 +194,7 @@ int main() {
                             lr = (random() % 3);
                         }
 
-                        switch (random() % 5) {
+                        switch (random() % 5) { //move soldiers with random bias
                             case 0:
                                 soldier->move(0,world);
                             case 1:
@@ -208,7 +207,7 @@ int main() {
                                 soldier->move(2,world);
                         }
 
-                    }if (strcmp(soldier->getSymbol(), "@") == 0) {
+                    }if (strcmp(soldier->getSymbol(), "@") == 0) { //if spartan is adjacent to enemy soldier, attack once per frame
 
                         if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "i") == 0) {
                             soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
@@ -233,7 +232,7 @@ int main() {
 
                     }
 
-                    if (strcmp(soldier->getSymbol(), "i") == 0) {
+                    if (strcmp(soldier->getSymbol(), "i") == 0) { //if persian is adjacent to enemy soldier, attack once per frame
 
                         if (strcmp((world[soldier->getPos().x + 1][soldier->getPos().y]->getSymbol()), "@") == 0) {
                             soldier->attack(static_cast<Person *>(world[soldier->getPos().x + 1][soldier->getPos().y]));
@@ -266,11 +265,17 @@ int main() {
             i++;
         }
 
+        //Narration
+
+        //pop the front of the message queue and add to the display array
+
         if(!Narrator::messages.empty() && n % MSG_DISPLAY_TIME == 0){
             display[msgNo % NO_OF_MESSAGES] = Narrator::messages.front();
             ++msgNo;
             Narrator::messages.pop();
         }
+
+        //display messages in the display array
 
         unsigned int j = NO_OF_MESSAGES - 1;
         for(string& message : display){
@@ -279,10 +284,11 @@ int main() {
         }
 
 
+        //refresh the screen once per frame
 
         refresh();
         n++;
-        usleep(50000);
+        usleep(FRAME_DELAY);
 
     }
 
@@ -290,6 +296,7 @@ int main() {
 
 
 
+    //cleanup
 
     for (int x=0; x < MAP_SIZE_X; x++) {
         for (int y=0; y < MAP_SIZE_Y; y++)

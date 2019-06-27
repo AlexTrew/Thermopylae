@@ -11,7 +11,7 @@ const void Person::attack(Person*  p) {
 
             p->setHealth(1);
             if(p->getHealth()<=0){
-                Narrator::printMsg(this,p, random() % 31);
+                Narrator::printMsg(this,p, random() % 35);
             }
         }
     }
