@@ -179,9 +179,12 @@ int main() {
 
             }
 
-            if(soldier->isAlive()){ //decide which direction persians move while advancing
+
+            //kill a soldier whose health is 0
+            if(soldier->isAlive()){
                 if (soldier->getHealth() <= 0) soldier->die();
 
+                //decide which direction persians move while advancing
                 if (started) {
                     if (strcmp(soldier->getSymbol(), "i") == 0) {
 
