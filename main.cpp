@@ -31,7 +31,7 @@
 #define SIM_LENGTH 3000 // number of frames before the simulation closes
 #define MSG_DISPLAY_TIME 1 //number of frames for which a message will be displayed
 #define NO_OF_MESSAGES 8 // maximum number of messages to be drawn on the screen at once
-#define FRAME_DELAY 100000 //time delay between each frame in seconds
+#define FRAME_DELAY 100000 //time delay between each frame in nanoseconds
 
 
 using namespace std;
