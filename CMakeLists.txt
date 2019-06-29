@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_library(ncurses main.cpp )
 
-add_executable(Thermopylae  main.cpp Person.cpp Person.h WorldObject.cpp WorldObject.h Spartan.h Persian.h Water.h Rock.h Nothing.h vector2.h Body.h)
+add_executable(Thermopylae  main.cpp Person.cpp Person.h WorldObject.cpp WorldObject.h Spartan.h Persian.h Water.h Rock.h Nothing.h vector2.h Body.h Narrator.h Narrator.cpp)
 
 target_link_libraries(Thermopylae -lncurses)
 
