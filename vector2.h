@@ -10,7 +10,4 @@ struct vector2 {
     int y;
 };
 
-
-
-
 #endif //PRACTICE_VECTOR2_H

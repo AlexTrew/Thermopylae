@@ -8,9 +8,7 @@
 #ifndef PRACTICE_WATER_H
 #define PRACTICE_WATER_H
 
-
 class Water : public WorldObject {
-
 
 public:
 
@@ -18,8 +16,6 @@ public:
         this->pos = pos;
         symbol = "~";
     }
-
 };
-
 
 #endif //PRACTICE_WATER_H

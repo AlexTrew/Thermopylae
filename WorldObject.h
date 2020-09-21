@@ -13,7 +13,7 @@
 #ifndef PRACTICE_WORLDOBJECT_H
 #define PRACTICE_WORLDOBJECT_H
 
-using namespace std;
+
 
 class WorldObject { //object that appears in the map. May be Person or an inanimate object
 

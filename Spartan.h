@@ -10,7 +10,6 @@
 
 class Spartan : public Person {
 
-
 public:
 
     Spartan(int skill, const char* name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(
@@ -25,8 +24,6 @@ public:
         this->alive = alive;
         symbol = "@";
     }
-
-
 };
 
 
