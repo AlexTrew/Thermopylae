@@ -5,10 +5,8 @@
 #include "Person.h"
 
 const void Person::attack(Person*  p) {
-
     if (random() % 20 > p->getSkill()) {
         if (random() % 20 > p->getAc()) {
-
             p->setHealth(1);
             if(p->getHealth()<=0){
                 Narrator::printMsg(this,p, random() % 35);
@@ -43,7 +41,6 @@ int Person::die() {
     alive = false;
     deleting = true;
     return 0;
-
 }
 
 const bool Person::isAlive(){
@@ -52,13 +49,8 @@ const bool Person::isAlive(){
 
 
 int Person::move(int d,  WorldObject*  world[][MAP_SIZE_Y]) { //add safety checks and optimise
-
-
-
     vector2 current = {getPos().x, getPos().y};
     vector2 update;
-
-
     if (getPos().x + 1 < MAP_SIZE_X && d == 0 &&
         strcmp(world[getPos().x + 1][getPos().y]->getSymbol(), " ") == 0) { //check x+1
         update = {getPos().x + 1, getPos().y};
@@ -102,7 +94,5 @@ int Person::move(int d,  WorldObject*  world[][MAP_SIZE_Y]) { //add safety check
     }
 
     return 0;
-
-
 }
 

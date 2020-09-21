@@ -8,16 +8,12 @@
 #ifndef PRACTICE_NOTHING_H
 #define PRACTICE_NOTHING_H
 
-
 class Nothing : public WorldObject {
-
 public:
     Nothing(vector2 pos) : WorldObject(pos) {
         this->pos = pos;
         symbol = " ";
     }
-
-
 };
 
 

@@ -13,7 +13,6 @@ public:
         this->symbol = " ";
         this->alive = false;
     };
-
 };
 
 #endif //PRACTICE_BODY_H
