@@ -12,7 +12,7 @@
 class Person : public WorldObject {
 protected:
     const char* name;
-    string weapon;
+    std::string weapon;
     int skill;
     int ac;
     int health;

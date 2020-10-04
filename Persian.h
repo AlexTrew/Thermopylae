@@ -9,7 +9,7 @@
 
 class Persian : public Person {
 public:
-    Persian(int skill, const char* name, string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(
+    Persian(int skill, const char* name, std::string weapon, int ac, int health, vector2 pos, int state, bool alive) : Person(
             pos) {
         this->skill = skill;
         this->name = name;

@@ -100,7 +100,7 @@ int main() {
     bool started = false;
     int n = 0;
     int msgNo = 1;
-    string display[NO_OF_MESSAGES]; //store messages currently being drawn on the screen
+    std::string display[NO_OF_MESSAGES]; //store messages currently being drawn on the screen
 	
     while (n < SIM_LENGTH) { //main loop: to be executed per frame
         for (int y = 0; y < MAP_SIZE_Y; y++) {
@@ -210,7 +210,7 @@ int main() {
 
         //display messages in the display array
         unsigned int j = NO_OF_MESSAGES - 1;
-        for(string& message : display){
+        for(std::string& message : display){
             mvprintw( j % NO_OF_MESSAGES,LOG_X_OFFSET,message.c_str());
             j++;
         }
@@ -226,6 +226,6 @@ int main() {
         for (int y=0; y < MAP_SIZE_Y; y++)
             delete world[x][y];
     }
-    cout << "program exited successfully" << endl;
+    std::cout << "program exited successfully" << std::endl;
     exit(EXIT_SUCCESS);
 }

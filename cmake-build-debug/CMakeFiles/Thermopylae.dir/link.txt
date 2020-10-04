@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/Thermopylae.dir/main.cpp.o CMakeFiles/Thermopylae.dir/Person.cpp.o CMakeFiles/Thermopylae.dir/WorldObject.cpp.o CMakeFiles/Thermopylae.dir/Narrator.cpp.o  -o Thermopylae  -lncurses 

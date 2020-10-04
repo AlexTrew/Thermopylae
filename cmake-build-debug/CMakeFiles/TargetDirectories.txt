@@ -1,0 +1,4 @@
+/home/alex/CLionProjects/Thermopylae/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/alex/CLionProjects/Thermopylae/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/alex/CLionProjects/Thermopylae/cmake-build-debug/CMakeFiles/Thermopylae.dir
+/home/alex/CLionProjects/Thermopylae/cmake-build-debug/CMakeFiles/ncurses.dir

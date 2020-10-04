@@ -5,7 +5,7 @@
 #include "Narrator.h"
 #include <cstring>
 
-queue<string> Narrator::messages;
+std::queue<std::string> Narrator::messages;
 void Narrator::printMsg(Person* a, Person* d, int seed) {
     std::stringstream str;
     switch(seed){

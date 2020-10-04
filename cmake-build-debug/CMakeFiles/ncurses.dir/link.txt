@@ -1,0 +1,2 @@
+/usr/bin/ar qc libncurses.a  CMakeFiles/ncurses.dir/main.cpp.o
+/usr/bin/ranlib libncurses.a
